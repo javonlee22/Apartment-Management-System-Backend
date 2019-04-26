@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const uniqueValidator = require('mongoose-unique-validator');
 
-const tenantSchema = mongoose.Schema({
+const userSchema = mongoose.Schema({
     _id: mongoose.Types.ObjectId,
     first_name: {
         type: String,
@@ -23,7 +23,6 @@ const tenantSchema = mongoose.Schema({
     },
     birth_date: {
         type: Number,
-        required:true
     },
     phone_number: {
         type: String,
@@ -37,9 +36,13 @@ const tenantSchema = mongoose.Schema({
     lease: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Lease'
+    },
+    isAdmin: {
+        type: Boolean,
+        required: true
     }
 })
 userSchema.plugin(uniqueValidator);
 
 
-module.exports = mongoose.model('Tenant', tenantSchema);
+module.exports = mongoose.model('User', userSchema);

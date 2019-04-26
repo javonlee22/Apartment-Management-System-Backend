@@ -1,0 +1,9 @@
+{
+    "env": {
+        "JWT_KEY": "ApartmentBackend2019",
+        "token_life": "21d",
+        "email_pass": "TechnoFormers#1",
+        "port": "8080",
+        "EMAIL": "ambassador@technoformers.com"
+    }
+}

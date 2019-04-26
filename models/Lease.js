@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 const leaseSchema = mongoose.Schema({
     _id: mongoose.Types.ObjectId,
     tenant: {
-        type: mongoose.Types.Schema.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         required: true
     },
     start_date: {
@@ -15,7 +15,7 @@ const leaseSchema = mongoose.Schema({
         required: true
     },
     unit: {
-        type: mongoose.Types.Schema.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'Unit',
         required: true
     }
