@@ -31,14 +31,14 @@ router.post("/login", (req, res, next) => {
               _id: user[0]._id,
               isAdmin: false
             },
-            process.enve.JWT_KEY,
+            process.env.JWT_KEY,
             {
               expiresIn: process.env.token_life
             }
           );
+          console.log(JSON.stringify(req.cookies.token))
           return res.status(200).json({
             message: "Success",
-            user: user[0],
             token: token
           });
         }

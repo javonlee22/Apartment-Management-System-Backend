@@ -7,10 +7,11 @@ const User = require("../models/User");
 const Lease = require("../models/Lease");
 const Apartment = require("../models/Apartment");
 const Unit = require("../models/Unit");
+const enc = require('../util/enc')
 
 const router = express.Router();
 
-router.post("/login", adminAuth, (req, res, next) => {
+router.post("/login", (req, res, next) => {
   User.find({
     email: req.body.email,
     isAdmin: true
@@ -41,9 +42,11 @@ router.post("/login", adminAuth, (req, res, next) => {
               expiresIn: process.env.token_life
             }
           );
+          // var encToken = enc.encryptCookie(token)
+          // res.cookie('token',encToken)
+          console.log(JSON.stringify(req.cookies))
           return res.status(200).json({
             message: "Success",
-            user: user[0],
             token: token
           });
         }
