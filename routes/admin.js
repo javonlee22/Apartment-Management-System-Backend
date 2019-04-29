@@ -10,7 +10,7 @@ const Unit = require("../models/Unit");
 
 const router = express.Router();
 
-router.post("/login", (req, res, next) => {
+router.post("/login", adminAuth, (req, res, next) => {
   User.find({
     email: req.body.email,
     isAdmin: true

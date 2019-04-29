@@ -25,7 +25,8 @@ const apartmentSchema = mongoose.Schema({
     units: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Unit'
-    }]
+    }],
+    url: {type: String}
 
 })
 

@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const http = require("http");
+const cors = require('cors');
 const mongoose = require("mongoose");
 const mongoConnect = require("./util/database").mongoConnect;
 const parser = require("body-parser");
@@ -16,6 +17,7 @@ const server = http.createServer(app);
 
 app.use(parser.json());
 app.use(parser.urlencoded({ extended: true }));
+app.use(cors());
 
 app.use("/api/admin", adminRoutes);
 app.use("/api/public", publicRoutes);

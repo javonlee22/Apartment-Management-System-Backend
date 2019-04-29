@@ -25,7 +25,8 @@ const unitSchema = mongoose.Schema({
     unit_number: {
         type: String,
         required: true
-    }
+    },
+    url:{type: String}
 })
 
 module.exports = mongoose.model('Unit', unitSchema);
