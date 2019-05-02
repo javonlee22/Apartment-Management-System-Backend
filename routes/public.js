@@ -8,7 +8,6 @@ router.get('/listings',(req, res, next) => {
     Apartment.find()
     .exec()
     .then(apts => {
-        console.log(apts)
         return res.status(200).json({
             apts: apts
         })

@@ -4,7 +4,7 @@ const unitSchema = mongoose.Schema({
     _id: mongoose.Types.ObjectId,
     tenant: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Tenant'
+        ref: 'User'
     },
     bedrooms: {
         type: Number,
@@ -19,7 +19,7 @@ const unitSchema = mongoose.Schema({
         required: true
     },
     building: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         required: true
     },
     unit_number: {

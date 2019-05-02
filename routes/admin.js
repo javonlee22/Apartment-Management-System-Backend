@@ -7,7 +7,8 @@ const User = require("../models/User");
 const Lease = require("../models/Lease");
 const Apartment = require("../models/Apartment");
 const Unit = require("../models/Unit");
-const enc = require('../util/enc')
+const WorkOrder = require("../models/WorkOrder");
+//const enc = require("../util/enc");
 
 const router = express.Router();
 
@@ -30,7 +31,7 @@ router.post("/login", (req, res, next) => {
           });
         }
         if (result) {
-          const token = jwt.sign(
+          var token = jwt.sign(
             {
               email: user[0].email,
               name: user[0].first_name + user[0].last_name,
@@ -42,9 +43,6 @@ router.post("/login", (req, res, next) => {
               expiresIn: process.env.token_life
             }
           );
-          // var encToken = enc.encryptCookie(token)
-          // res.cookie('token',encToken)
-          console.log(JSON.stringify(req.cookies))
           return res.status(200).json({
             message: "Success",
             token: token
@@ -91,8 +89,7 @@ router.post("/register", (req, res, next) => {
               phone_number: req.body.phone_number,
               lease: null,
               unit: null,
-              birth_date: null,
-              
+              birth_date: null
             });
             user
               .save()
@@ -139,18 +136,16 @@ router.post("/create-tenant", adminAuth, (req, res, next) => {
               last_name: req.body.last_name,
               isAdmin: false,
               password: hash,
-              phone_number: req.body.phone_number
-              //Add lease, apartment and unit
-            });
-            const lease = new Lease({
-              _id: new mongoose.Types.ObjectId(),
-              start_date: req.body.start,
-              end_date: req.body.end,
+              phone_number: req.body.phone_number,
               unit: req.body.unit
             });
             user
               .save()
-              .then(result => console.log(result))
+              .then(result => {
+                return res.status(200).json({
+                  message: 'Tenant Created'
+                })
+              })
               .catch(err => {
                 console.log(err);
                 return res.status(500).json({
@@ -171,7 +166,8 @@ router.post("/add-apt", adminAuth, (req, res, next) => {
     city: req.body.city,
     state: req.body.state,
     zip_code: req.body.zip_code,
-    units: null
+    url: req.body.url,
+    units: []
   });
   apt
     .save()
@@ -195,16 +191,106 @@ router.post("/add-unit", adminAuth, (req, res, next) => {
     tenant: req.body.tenant,
     bedrooms: req.body.bedrooms,
     bathrooms: req.body.bathrooms,
-    square_feet: req.body.sq_ft,
-    building: req.body.apartment,
-    unit_number: req.body.unit_number
+    square_feet: req.body.square_feet,
+    building: req.body.building,
+    unit_number: req.body.unit_number,
+    url: req.body.url,
+    tenant: null
   });
   unit
     .save()
     .then(result => {
       console.log(result);
+      Apartment.update(
+        { title: req.body.building },
+        {
+          $push: {
+            units: result._id
+          }
+        }
+      ).exec();
       return res.status(201).json({
         message: "Success"
+      });
+    })
+    .catch(err => {
+      console.log(err);
+      return res.status(500).json({
+        message: "Server Error"
+      });
+    });
+});
+
+router.get("/apts", adminAuth, (req, res, next) => {
+  Apartment.aggregate([
+    {
+      $lookup: {
+        from: "units",
+        localField: "units",
+        foreignField: "_id",
+        as: "units"
+      }
+    }
+  ])
+    .exec()
+    .then(result => {
+      return res.status(200).json({
+        result: result
+      });
+    })
+    .catch(err => {
+      console.log(err);
+      return res.status(500).json({
+        message: "Server Error"
+      });
+    });
+});
+
+router.get("/units/:id", adminAuth, (req, res, next) => {
+  Unit.findById(req.params.id)
+    .exec()
+    .then(unit => {
+      return res.status(200).json({
+        unit: unit
+      });
+    });
+});
+
+router.get("/workOrders", adminAuth, (req, res, next) => {
+  WorkOrder.find()
+    .exec()
+    .then(orders => {
+      return res.status(200).json({
+        message: "Success",
+        orders: orders
+      });
+    })
+    .catch(err => {
+      console.log(err);
+      return res.status(200).json({
+        message: "Server Error"
+      });
+    });
+});
+
+router.get("/tenants", adminAuth, (req, res, next) => {
+  User.aggregate([
+    {
+      $match: { isAdmin: false }
+    },
+    {
+      $lookup: {
+        from: "units",
+        localField: "unit",
+        foreignField: "_id",
+        as: "unit"
+      }
+    }
+  ])
+    .exec()
+    .then(users => {
+      return res.status(200).json({
+        users: users
       });
     })
     .catch(err => {

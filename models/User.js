@@ -40,6 +40,9 @@ const userSchema = mongoose.Schema({
     isAdmin: {
         type: Boolean,
         required: true
+    },
+    balance: {
+        type: Number
     }
 })
 userSchema.plugin(uniqueValidator);

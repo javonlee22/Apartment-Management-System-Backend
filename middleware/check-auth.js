@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
-const Crypto = require('crypto-js')
+//const enc = require('../util/enc')
+
 
 /**This middleware validates the token stored in the request headers
  * @param token - Expects a JWT in the Authorization field of the request headers.
